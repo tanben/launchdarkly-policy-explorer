@@ -69,10 +69,10 @@ This Python-based Streamlit app allows users to analyze Role-Based Access Contro
     ```sh
     python3 -m venv .venv
     source .venv/bin/activate
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
     ```
 
-    **NOTE:** If you encounter missing module errors after `pip install`, deactivate and then reactivate your virtual environment:
+    **NOTE:** If you encounter missing module errors after `pip3 install`, deactivate and then reactivate your virtual environment:
     ```sh
     deactivate
     source .venv/bin/activate
