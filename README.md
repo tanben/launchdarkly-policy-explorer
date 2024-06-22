@@ -1,7 +1,7 @@
 
 # LaunchDarkly RBAC Policy Explorer
 
-This Python-based Streamlit app allows users to analyze Role-Based Access Control (RBAC) policies in LaunchDarkly, generating comprehensive operational, security, and core RBAC metrics to evaluate their management and effectiveness.
+This Python-based Streamlit app allows users to analyze LaunchDarkly Role-Based Access Control (RBAC) policies, generating comprehensive operational, security, and core RBAC metrics to evaluate their management and effectiveness.
 
 ## Table of Contents
 
