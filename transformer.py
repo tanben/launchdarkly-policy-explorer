@@ -54,9 +54,6 @@ class Transformer():
         distict_team_assigned_custom_roles = len(
             set(team_assigned_custom_roles))
 
-        # user_assigned_custom_roles = self.convert_role_id_to_key(
-        #     user_assigned_custom_roles)
-
         distinct_combined_roles = set(
             user_assigned_custom_roles + team_assigned_custom_roles)
 

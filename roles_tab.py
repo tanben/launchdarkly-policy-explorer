@@ -80,20 +80,10 @@ class RolesTab:
         with col3:
             total_custom_roles = self.metrics.get('total_custom_role')
             assigned_count = self.metrics.get('total_assigned_roles')
-            orphaned_role_count = self.metrics.get('orphaned_roles')
-
-            # TODO: compute delta
-            # orphan_delta = round(orphaned_role_count /
-            #                      total_custom_roles * 100, 2)
-
-            # role_asigned_ratio_threshold = 0.65
-            # role_assigned_ratio = assigned_count / total_custom_roles
 
             st.metric('Custom Roles',
                       total_custom_roles)
-            # st.metric('Orphaned',
-            #           delta_color="inverse",
-            #           value=self.metrics.get('orphaned_roles'), delta=f"{orphan_delta}%")
+
             st.metric('Orphaned',
                       delta_color="inverse",
                       value=self.metrics.get('orphaned_roles'))

@@ -7,7 +7,7 @@ from roles_tab import RolesTab
 from members_tab import MembersTab
 from teams_tab import TeamsTab
 from app_config import AppConfig
-
+import random
 
 class DetailsTab:
     def __init__(self, ld_data=None):
@@ -50,14 +50,16 @@ def _fetch_remote(app_config=None):
         "members": client.list_members()
     }
 
-    if app_config.save_data:
-        teams_json = f"{output_dir}/teams.json"
-        roles_json = f"{output_dir}/roles.json"
-        members_json = f"{output_dir}/members.json"
+    if not app_config.save_data:
+        return ld_data
+    
+    teams_json = f"{output_dir}/teams.json"
+    roles_json = f"{output_dir}/roles.json"
+    members_json = f"{output_dir}/members.json"
 
-        client.save_data_to_file(ld_data['teams'], teams_json)
-        client.save_data_to_file(ld_data['roles'], roles_json)
-        client.save_data_to_file(ld_data['members'], members_json)
+    client.save_data_to_file(ld_data['teams'], teams_json)
+    client.save_data_to_file(ld_data['roles'], roles_json)
+    client.save_data_to_file(ld_data['members'], members_json)
 
     return ld_data
 
@@ -80,17 +82,15 @@ def get_data(app_config=None):
     ld_data = None
 
     if app_config.read_local:
-        print("Reading locally")
+        # print("Reading locally")
         ld_data = _fetch_local()
     else:
-        print("Fetching data...")
+        # print("Fetching data...")
         ld_data = _fetch_remote(app_config)
 
     return ld_data
 
-
 def run_main(app_config=None):
-
     ld_data = None
 
     if app_config.access_token == None:
@@ -100,20 +100,18 @@ def run_main(app_config=None):
     if app_config.debug:
         print(app_config)
 
-    roles_tab, members_tab, teams_tab = st.tabs(["Roles", "Members", "Teams"])
-
-    with st.spinner('Loadng data...'):
+    
+    loading_message="Aligning our digital ducks in a row..."
+    with st.spinner(loading_message):
         ld_data = get_data(app_config)
 
+    roles_tab, members_tab, teams_tab = st.tabs(["Roles", "Members", "Teams"])
     detailsTab = DetailsTab(ld_data)
-
     with roles_tab:
         detailsTab.show_roles_tab()
     with members_tab:
-
         detailsTab.show_members_tab()
     with teams_tab:
-
         detailsTab.show_teams_tab()
 
 
@@ -126,7 +124,6 @@ if __name__ == "__main__":
 
     st.set_page_config(layout="wide")
     input_container = st.container()
-    # content_container = st.container(border=True)
     content_container = st.empty()
 
     with input_container:

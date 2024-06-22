@@ -11,36 +11,30 @@ class LaunchDarklyAPIClient:
         self.headers = {"Authorization": self.api_key}
         self.debug = debug
 
-    def _fetch_data(self, endpoint, offset=0, all_data=None):
-
-        if all_data is None:
-            all_data = []
-            offset = 0
-
+    def _fetch_data(self, endpoint):
+        all_data = []
+        offset = 0
         limit = 20
-        params = {
-            "limit": limit,
-            "offset": offset
-        }
         url = f"{self.base_url}/{endpoint}"
 
-        if (self.debug):
-            print(
-                f"Calling {endpoint} url={url}, offset={offset}, allData={ 0 if all_data == None else len(all_data)}")
+        while True:
+            params = {"limit": limit, "offset": offset}
 
-        response = requests.get(url=url, headers=self.headers, params=params)
-        if response.status_code == 200:
+            if self.debug:
+                print(f"Calling {endpoint} url={url}, offset={offset}, data_len={len(all_data)}")
+
+            response = requests.get(url, headers=self.headers, params=params)
+            if response.status_code != 200:
+                break 
+
             data = response.json()
-            all_data.extend(data['items'])
-            if len(data['items']) == limit:
-                return self._fetch_data(endpoint, offset + limit, all_data)
-            else:
+            all_data.extend(data["items"])
 
-                return all_data
-        else:
-            print(f"Failed to fetch members: {response.status_code}")
-            print(response.json())
-            return all_data
+            if len(data["items"]) != limit:
+                break
+            offset += limit
+
+        return all_data
 
     def save_data_to_file(self, data, filename):
         try:
@@ -86,19 +80,14 @@ class LaunchDarklyAPIClient:
         try:
             teams = self._fetch_data("teams")
             for team in teams:
-                team_roles_details = self._fetch_data(
-                    f'teams/{team.get("key")}/roles')
+                team_roles_details = self._fetch_data(f'teams/{team["key"]}/roles')
+                team['customRoleKeys'] = [role['key'] for role in team_roles_details]
 
-                team_roles = []
-                for role_detail in team_roles_details:
-                    team_roles.append(role_detail['key'])
-                team['customRoleKeys'] = team_roles
             return teams
 
         except Exception as e:
             print(f"Error listing teams: {e}")
             return []
-
 
 def main():
     load_dotenv()

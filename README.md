@@ -3,6 +3,19 @@
 
 This Python-based Streamlit app allows users to analyze Role-Based Access Control (RBAC) policies in LaunchDarkly, generating comprehensive operational, security, and core RBAC metrics to evaluate their management and effectiveness.
 
+## Table of Contents
+
+- [LaunchDarkly RBAC Policy Explorer](#launchdarkly-rbac-policy-explorer)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Operational Metrics](#operational-metrics)
+  - [Contributing](#contributing)
+
+
+
 ## Features
 - **Role-Based Access Control (RBAC) Analysis**:
   - Analyze and visualize RBAC policies in LaunchDarkly.
@@ -25,30 +38,6 @@ This Python-based Streamlit app allows users to analyze Role-Based Access Contro
 - **Data Management**:
   - Save and load LaunchDarkly payloads and transformed data.
   - Toggle between reading local data and fetching data from the LaunchDarkly API.
-### Operational Metrics
-**Custom Roles**
-![](./img/rolesCharts.jpg)
-
-| Metric                  | Description                                  |
-| ----------------------- | -------------------------------------------- |
-| Custom roles            | Total custom roles                           |
-| Orphaned roles          | Total unassigned custom roles                |
-| Assigned roles          | Total assigned member and Teams roles        |
-| Role/User ratio         | Average number of roles assigned to a member |
-| Role/Team ratio         | Average number of roles assigned to Teams    |
-| Permission/Policy ratio | Average number of permissions per policy     |
-
-**Account Members**
-![](./img/membersChart.jpg)
-
-| Metric                    | Description                                                                   |
-| ------------------------- | ----------------------------------------------------------------------------- |
-| Role Utilization Rate     | Percentage of users actively utilizing the permissions granted by their roles |
-| Inactive User w/ Roles    | Inactive users with active custom roles                                       |
-| Active Roles last 30 days | Show role activities in the last 30 days. Y-Axis is the days since last seen  |
-| Top 5 Roles               | Total count per role assigned to members and inherited from Teams             |
-| Active Users              | Total active users: 30, 60, 90, 120, >120 days                                |
-
 
 ## Requirements
 
@@ -110,6 +99,31 @@ This Python-based Streamlit app allows users to analyze Role-Based Access Contro
 
 2. **Access the application**:
     - Open your web browser and go to `http://localhost:8501`.
+
+### Operational Metrics
+**Custom Roles**
+![](./img/rolesCharts.jpg)
+
+| Metric                  | Description                                  |
+| ----------------------- | -------------------------------------------- |
+| Custom roles            | Total custom roles                           |
+| Orphaned roles          | Total unassigned custom roles                |
+| Assigned roles          | Total assigned member and Teams roles        |
+| Role/User ratio         | Average number of roles assigned to a member |
+| Role/Team ratio         | Average number of roles assigned to Teams    |
+| Permission/Policy ratio | Average number of permissions per policy     |
+
+**Account Members**
+![](./img/membersChart.jpg)
+
+| Metric                    | Description                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| Role Utilization Rate     | Percentage of users actively utilizing the permissions granted by their roles |
+| Inactive User w/ Roles    | Inactive users with active custom roles                                       |
+| Active Roles last 30 days | Show role activities in the last 30 days. Y-Axis is the days since last seen  |
+| Top 5 Roles               | Total count per role assigned to members and inherited from Teams             |
+| Active Users              | Total active users: 30, 60, 90, 120, >120 days                                |
+
 
 ## Contributing
 

@@ -11,7 +11,6 @@ class TeamsTab:
         self.teams = teams
 
     def _render_teams_headsup_display(self):
-        # self._assigned_team_roles_chart()
         col1, col2 = st.columns([0.50, 0.50])
         with col1:
             self._most_assigned_roles_chart()
