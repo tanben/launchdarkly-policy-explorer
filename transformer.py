@@ -4,7 +4,6 @@ import datetime
 
 
 class Transformer():
-    # def __init__(self, roles: dict = None, members: dict = None, teams: dict = None, save=False):
     def __init__(self, ld_data = None, save=False):
         self.teams_source, self.roles_source, self.members_source = ld_data.values()
         self.roles_df = None
