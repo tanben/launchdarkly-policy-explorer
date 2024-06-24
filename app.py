@@ -10,6 +10,7 @@ from app_config import AppConfig
 from zipfile import ZipFile
 import io
 import json
+from faker import Faker
 
 class DetailsTab:
     def __init__(self,transformer):
@@ -84,6 +85,16 @@ def get_data(app_config=None):
 
     return ld_data
 
+def anonymize_data(data):
+    fake = Faker()
+    cp_data = data.copy()
+    for item in cp_data:
+        item['firstName'] = fake.first_name() if item.get('firstName') else None
+        item['lastName'] = fake.last_name() if item.get('lastName') else None
+        item['email'] = fake.email() if item.get('email') else None
+
+    return cp_data
+
 def run_main(app_config=None):
     st.session_state.ld_data = None
 
@@ -99,8 +110,6 @@ def run_main(app_config=None):
             save=app_config.save_data, ld_data=st.session_state.ld_data)
 
     transformer.process(output_dir=app_config.output_dir)
-
-    st.session_state.ld_data['policies'] = transformer.get_policies()
 
     roles_tab, members_tab, teams_tab = st.tabs(["Roles", "Members", "Teams"])
     detailsTab = DetailsTab(transformer)
@@ -155,7 +164,12 @@ if __name__ == "__main__":
                     zip_buffer = io.BytesIO()
                     with ZipFile(zip_buffer, "w") as zipf:
                         for key, value in st.session_state.ld_data.items():
-                            zipf.writestr(f"{key}.json", json.dumps(value, indent=4))
+                            tmp_data = value
+
+                            if app_config.anonymous_export and key == 'members':
+                                tmp_data = anonymize_data(value)
+
+                            zipf.writestr(f"{key}.json", json.dumps(tmp_data, indent=4))
 
                     st.download_button(
                             label="export",

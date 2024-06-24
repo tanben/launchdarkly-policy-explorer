@@ -73,6 +73,7 @@ This Python-based Streamlit app allows users to analyze LaunchDarkly Role-Based 
         DEBUG=false
         SAVE_DATA=false
         READ_LOCAL=false
+        ANONYMOUS_EXPORT=True
         OUTPUT_DIR=output
         LD_API_KEY=<your_launchdarkly_api_key> 
         ```

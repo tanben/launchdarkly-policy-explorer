@@ -10,6 +10,8 @@ class AppConfig:
         self.debug = os.getenv("DEBUG",'False').lower()  == 'true'
         self.save_data =os.getenv("SAVE_DATA",'False').lower()  == 'true'
         self.read_local = os.getenv("READ_LOCAL",'False').lower() == 'true'
+        self.anonymous_export = os.getenv("ANONYMOUS_EXPORT",'True').lower() == 'true'
+
         self.output_dir = os.getenv("OUTPUT_DIR",'output')
 
     def __str__(self) -> str:
