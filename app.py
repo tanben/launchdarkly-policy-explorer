@@ -7,17 +7,12 @@ from roles_tab import RolesTab
 from members_tab import MembersTab
 from teams_tab import TeamsTab
 from app_config import AppConfig
-import random
+from zipfile import ZipFile
+import io
+import json
 
 class DetailsTab:
-    def __init__(self, ld_data=None):
-        teams_value, roles_value, members_value = ld_data.values()
-
-        transformer = Transformer(
-            save=app_config.save_data, roles=roles_value, members=members_value, teams=teams_value)
-
-        transformer.process()
-
+    def __init__(self,transformer):
         self.roles = transformer.get_roles_df()
         self.members = transformer.get_members_df()
         self.teams = transformer.get_teams_df()
@@ -39,18 +34,18 @@ class DetailsTab:
     def show_teams_tab(self):
         self.teams_tab.render()
 
-
-def _fetch_remote(app_config=None):
-    client = LaunchDarklyAPIClient(app_config.access_token, app_config.debug)
-    output_dir = 'output'
+@st.cache_data(show_spinner=False, ttl=300)
+def _fetch_remote(_app_config=None):
+    client = LaunchDarklyAPIClient(_app_config.access_token, _app_config.debug)
+    output_dir = _app_config.output_dir
 
     ld_data = {
         "teams": client.list_teams(),
         "roles": client.list_custom_roles(),
-        "members": client.list_members()
+        "members": client.list_members(),
     }
 
-    if not app_config.save_data:
+    if not _app_config.save_data:
         return ld_data
     
     teams_json = f"{output_dir}/teams.json"
@@ -64,8 +59,8 @@ def _fetch_remote(app_config=None):
     return ld_data
 
 
-def _fetch_local():
-    output_dir = 'output'
+def _fetch_local(_app_config=None):
+    output_dir = _app_config.output_dir
 
     ld_data = {
         "teams": Utils.read_json_file(f"{output_dir}/teams.json"),
@@ -73,7 +68,6 @@ def _fetch_local():
         "members": Utils.read_json_file(f"{output_dir}/members.json")
     }
     return ld_data
-
 
 def get_data(app_config=None):
     if app_config == None:
@@ -83,7 +77,7 @@ def get_data(app_config=None):
 
     if app_config.read_local:
         # print("Reading locally")
-        ld_data = _fetch_local()
+        ld_data = _fetch_local(app_config)
     else:
         # print("Fetching data...")
         ld_data = _fetch_remote(app_config)
@@ -91,22 +85,25 @@ def get_data(app_config=None):
     return ld_data
 
 def run_main(app_config=None):
-    ld_data = None
+    st.session_state.ld_data = None
 
     if app_config.access_token == None:
         st.warning("Please enter your access token.")
         return
 
-    if app_config.debug:
-        print(app_config)
-
-    
     loading_message="Aligning our digital ducks in a row..."
     with st.spinner(loading_message):
-        ld_data = get_data(app_config)
+        st.session_state.ld_data = get_data(app_config)
+
+    transformer = Transformer(
+            save=app_config.save_data, ld_data=st.session_state.ld_data)
+
+    transformer.process(output_dir=app_config.output_dir)
+
+    st.session_state.ld_data['policies'] = transformer.get_policies()
 
     roles_tab, members_tab, teams_tab = st.tabs(["Roles", "Members", "Teams"])
-    detailsTab = DetailsTab(ld_data)
+    detailsTab = DetailsTab(transformer)
     with roles_tab:
         detailsTab.show_roles_tab()
     with members_tab:
@@ -114,9 +111,7 @@ def run_main(app_config=None):
     with teams_tab:
         detailsTab.show_teams_tab()
 
-
 if __name__ == "__main__":
-
     app_config = AppConfig()
 
     if app_config.debug:
@@ -128,12 +123,14 @@ if __name__ == "__main__":
 
     with input_container:
         st.header("Policy Analyzer")
-        col1, col2 = st.columns(2)
+        col1, col2 = st.columns([0.5,1])
 
-        if app_config.read_local:
+        if app_config.read_local or st.session_state.get('download_clicked', False):
             with content_container.container():
                 run_main(app_config)
-
+                if 'download_clicked' in st.session_state:
+                    del st.session_state['download_clicked']
+     
         with col1:
             token_value = app_config.access_token
             if app_config.read_local:
@@ -146,6 +143,26 @@ if __name__ == "__main__":
                                                     placeholder="API Access Token")
 
         with col2:
-            if st.button("Analyze", key="execute_button"):
-                with content_container.container():
-                    analysis = run_main(app_config)
+            subcol1, subcol2 = st.columns([0.2,1])
+
+            with subcol1:
+                if st.button("Analyze", key="execute_button",  on_click=lambda: st.session_state.update({'ld_data': None})):
+                    with content_container.container():
+                        analysis = run_main(app_config)
+
+            with subcol2:
+                if st.session_state.get('ld_data', None) is not None:
+                    zip_buffer = io.BytesIO()
+                    with ZipFile(zip_buffer, "w") as zipf:
+                        for key, value in st.session_state.ld_data.items():
+                            zipf.writestr(f"{key}.json", json.dumps(value, indent=4))
+
+                    st.download_button(
+                            label="export",
+                            data=zip_buffer,
+                            file_name="policies.zip",
+                            mime="application/zip",
+                            on_click=lambda: st.session_state.update({'download_clicked': True})
+                        )
+
+

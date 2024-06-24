@@ -4,22 +4,17 @@ import datetime
 
 
 class Transformer():
-    def __init__(self, roles: dict = None, members: dict = None, teams: dict = None, save=False):
-        self.roles_source = {} if roles is None else roles
+    # def __init__(self, roles: dict = None, members: dict = None, teams: dict = None, save=False):
+    def __init__(self, ld_data = None, save=False):
+        self.teams_source, self.roles_source, self.members_source = ld_data.values()
         self.roles_df = None
-
         self.policies = {}
-
-        self.teams_source = {} if teams is None else teams
         self.teams_df = None
-
-        self.members_source = {} if members is None else members
         self.members_df = None
-
         self.summary_metrics = {}
         self.save = save
 
-    def process(self):
+    def process(self, output_dir=None):
 
         self._prep_roles()
         self._prep_members()
@@ -31,7 +26,7 @@ class Transformer():
         self._generate_summary_metrics()
 
         if self.save == True:
-            self._save_data()
+            self._save_data(output_dir)
 
     def convert_role_id_to_key(self, arr_lookup):
 
@@ -213,19 +208,19 @@ class Transformer():
     def get_policies(self) -> dict:
         return self.policies
 
-    def _save_data(self, msg=None):
+    def _save_data(self, msg=None, output_dir='output'):
+        prefix="transformed-"
+        Utils.save_data_to_file(
+            self.roles_df.to_dict(orient="records"), f"{output_dir}/{prefix}roles.json")
 
         Utils.save_data_to_file(
-            self.roles_df.to_dict(orient="records"), "./output/transformer-out-roles.json")
+            self.teams_df.to_dict(orient="records"), f"{output_dir}/{prefix}teams.json")
 
         Utils.save_data_to_file(
-            self.teams_df.to_dict(orient="records"), "./output/transformer-out-teams.json")
+            self.members_df.to_dict(orient="records"), f"{output_dir}/{prefix}members.json")
 
         Utils.save_data_to_file(
-            self.members_df.to_dict(orient="records"), "./output/transformer-out-members.json")
-
-        Utils.save_data_to_file(
-            self.policies, "./output/transformer-out-policies.json")
+            self.policies, f"{output_dir}/{prefix}policies.json")
 
 
 def main():

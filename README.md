@@ -36,7 +36,7 @@ This Python-based Streamlit app allows users to analyze LaunchDarkly Role-Based 
   - Provide counts of active users over various time frames (30, 60, 90, 120, >120 days).
 
 - **Data Management**:
-  - Save and load LaunchDarkly payloads and transformed data.
+  - Save, load and export LaunchDarkly raw and transformed data.
   - Toggle between reading local data and fetching data from the LaunchDarkly API.
 
 ## Requirements
@@ -73,6 +73,7 @@ This Python-based Streamlit app allows users to analyze LaunchDarkly Role-Based 
         DEBUG=false
         SAVE_DATA=false
         READ_LOCAL=false
+        OUTPUT_DIR=output
         LD_API_KEY=<your_launchdarkly_api_key> 
         ```
 
