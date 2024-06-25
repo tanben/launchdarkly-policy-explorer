@@ -81,6 +81,8 @@ This Python-based Streamlit app allows users to analyze LaunchDarkly Role-Based 
     **Configuration Options:**
     - `SAVE_DATA`: Set to `true` to save the LaunchDarkly payload and transformed data.
     - `READ_LOCAL`: Set to `true` to read local transformed data, or `false` to fetch data from the LaunchDarkly REST API endpoint.
+    - `ANONYMOUS_EXPORT`: Anonymize member first and last name and email when exported.
+    - `OUTPUT_DIR`: Location for LaunchDarkly raw and transformed data.
     - `LD_API_KEY`: (Optional) If defined, this will prepopulate the API input field.
 
     **NOTE:** If you are running inside VSCode, kill the terminal running Streamlit to reload the `.env` file.
