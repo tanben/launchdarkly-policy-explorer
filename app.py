@@ -104,7 +104,7 @@ def anonymize_data(data):
 def run_main(app_config=None):
     st.session_state.ld_data = None
 
-    if app_config.access_token == None:
+    if app_config.access_token == None and app_config.read_local is False:
         st.warning("Please enter your access token.")
         return
 
