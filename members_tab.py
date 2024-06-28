@@ -43,11 +43,12 @@ class MembersTab:
         return active_members_with_roles
 
     def _get_inactive_members_with_combined_roles(self, older_than=30):
-
         inactive_members_with_roles = self.members[self.members['days_since_last_seen']
                                                    > older_than].copy()
-        inactive_members_with_roles.loc[:, 'unique_roles'] = inactive_members_with_roles.apply(
-            self._get_unique_roles, axis=1)
+
+        if len(inactive_members_with_roles) > 0:
+            inactive_members_with_roles.loc[:, 'unique_roles'] = inactive_members_with_roles.apply(
+                self._get_unique_roles, axis=1)
 
         return inactive_members_with_roles
 
@@ -167,10 +168,15 @@ class MembersTab:
             older_30_days = 30
             inactive_members_df = self._get_inactive_members_with_combined_roles(
                 older_than=older_30_days)
-            filtered_df = inactive_members_df[inactive_members_df['unique_roles'].apply(
-                lambda x: len(x) > 0)]
+
+            inactive_count = 0
+
+            if len(inactive_members_df) > 0:
+                filtered_df = inactive_members_df[inactive_members_df['unique_roles'].apply(
+                    lambda x: len(x) > 0)]
+                inactive_count = len(filtered_df)
             st.metric(
-                "Inactive Users w/ Roles", f"{len(filtered_df)}",  f"older than {older_30_days} days", delta_color="inverse",)
+                "Inactive Users w/ Roles", f"{inactive_count}",  f"older than {older_30_days} days", delta_color="inverse",)
 
     def _assigned_roles_chart(self, last_days_ago=30):
 

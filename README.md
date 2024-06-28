@@ -1,11 +1,10 @@
 
-# LaunchDarkly RBAC Policy Explorer
+# LaunchDarkly Policy Explorer
 
 This Python-based Streamlit app allows users to analyze LaunchDarkly Role-Based Access Control (RBAC) policies, generating comprehensive operational, security, and core RBAC metrics to evaluate their management and effectiveness.
 
 ## Table of Contents
-
-- [LaunchDarkly RBAC Policy Explorer](#launchdarkly-rbac-policy-explorer)
+- [LaunchDarkly Policy Explorer](#launchdarkly-policy-explorer)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Requirements](#requirements)
@@ -50,8 +49,8 @@ This Python-based Streamlit app allows users to analyze LaunchDarkly Role-Based 
 
 1. **Clone the repository**:
     ```sh
-    git clone git@github.com:tanben/ld-rbac-explorer.git
-    cd ld-rbac-explorer
+    git clone git@github.com:tanben/ld-policy-explorer.git
+    cd ld-policy-explorer
     ```
 
 2. **Set up a virtual environment and install dependencies**:
@@ -70,18 +69,18 @@ This Python-based Streamlit app allows users to analyze LaunchDarkly Role-Based 
 3. **Configure LaunchDarkly API credentials**:
     - Create a `.env` file in the root directory of the project using this template:
         ```
-        DEBUG=false
-        SAVE_DATA=false
-        READ_LOCAL=false
+        DEBUG=False
+        SAVE_DATA=False
+        READ_LOCAL=False
         ANONYMOUS_EXPORT=True
         OUTPUT_DIR=output
         LD_API_KEY=<your_launchdarkly_api_key> 
         ```
 
     **Configuration Options:**
-    - `SAVE_DATA`: Set to `true` to save the LaunchDarkly payload and transformed data.
-    - `READ_LOCAL`: Set to `true` to read local transformed data, or `false` to fetch data from the LaunchDarkly REST API endpoint.
-    - `ANONYMOUS_EXPORT`: Anonymize member first and last name and email when exported.
+    - `SAVE_DATA`: Set to `True` to save the LaunchDarkly payload and transformed data.
+    - `READ_LOCAL`: Set to `True` to read local transformed data, or `False` to fetch data from the LaunchDarkly REST API endpoint.
+    - `ANONYMOUS_EXPORT`: Anonymize member first and last name and email when exported. Default is `False`
     - `OUTPUT_DIR`: Location for LaunchDarkly raw and transformed data.
     - `LD_API_KEY`: (Optional) If defined, this will prepopulate the API input field.
 

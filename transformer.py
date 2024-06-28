@@ -4,7 +4,7 @@ import datetime
 
 
 class Transformer():
-    def __init__(self, ld_data = None, save=False):
+    def __init__(self, ld_data=None, save=False):
         self.teams_source, self.roles_source, self.members_source = ld_data.values()
         self.roles_df = None
         self.policies = {}
@@ -124,7 +124,6 @@ class Transformer():
         for iter in self.roles_source:
 
             _id = iter.get('_id')
-            del iter['_links']
 
             policy = iter['policy']
             self.policies[_id] = policy
@@ -141,7 +140,6 @@ class Transformer():
         return (today - input_dte).days
 
     def _prep_members_item(self, iter):
-        del iter['_links']
         iter['quickstartStatus'] = ""
         iter['hasPermissionGrants'] = False
         iter['isTeamMaintainer'] = False
@@ -154,7 +152,6 @@ class Transformer():
         if iter.get('permissionGrants') is not None and len(iter.get('permissionGrants')) > 0:
             iter['isTeamMaintainer'] = True
             iter['hasPermissionGrants'] = True
-            del iter['permissionGrants']
 
         iter['customRoles'] = self.convert_role_id_to_key(iter['customRoles'])
         iter['customRoles_count'] = len(iter['customRoles'])
@@ -166,10 +163,8 @@ class Transformer():
             iter['teams_count'] = len(teams)
             for team in teams:
                 iter['team_list'].append(team['key'])
-            del iter['teams']
 
-        if iter['_lastSeen'] < iter['creationDate']:
-            # handle invalid data
+        if iter['_lastSeen'] is None or iter['_lastSeen'] < iter['creationDate']:
             iter['_lastSeen'] = iter['creationDate']
 
         iter['days_since_last_seen'] = self._days_from_today(iter['_lastSeen'])
@@ -186,7 +181,6 @@ class Transformer():
         teams = []
         for iter in self.teams_source:
             _id = iter.get('_id')
-            del iter['_links']
             iter['customRoleKeys_count'] = len(iter['customRoleKeys'])
             teams.append(iter)
 
@@ -208,7 +202,7 @@ class Transformer():
         return self.policies
 
     def _save_data(self, msg=None, output_dir='output'):
-        prefix="transformed-"
+        prefix = "transformed-"
         Utils.save_data_to_file(
             self.roles_df.to_dict(orient="records"), f"{output_dir}/{prefix}roles.json")
 
