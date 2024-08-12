@@ -66,7 +66,7 @@ rpds-py==0.18.1
 six==1.16.0
 smmap==5.0.1
 stack-data==0.6.3
-streamlit==1.35.0
+streamlit==1.37.0
 streamlit-aggrid==1.0.5
 streamlit-agraph==0.0.45
 tenacity==8.3.0
